@@ -2,14 +2,31 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>RPG Clicker</title>
+        <title>Clicker</title>
         <style>body {margin: 0;padding: 0;}</style>
 
         <script src="lib/phaser.min.js"></script>
-
+        <script src="src/boot.js"></script>
+        <script src="src/preload.js"></script>
         <script src="src/game.js"></script>
+        <style type="text/css">
+          body {
+            margin: 0;
+          }
+        </style>
+        <script type="text/javascript">
+
+          var game = new Phaser.Game(1024, 768, Phaser.AUTO, '');
+
+          game.state.add("Boot", Boot);
+          game.state.add("Preload", Preload);
+          game.state.add("Game", Game);
+
+          game.state.start("Boot");
+        </script>
     </head>
     <body>
+
 
     </body>
 </html>
