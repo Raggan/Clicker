@@ -39,7 +39,7 @@ Game.prototype = {
     strokeThickness: 4
     }));
 
-    this.upgradePanel = this.game.add.image(5, this.game.world.centerY - 50, this.game.cache.getBitmapData('upgradePanel'));
+    this.upgradePanel = this.game.add.image(5, 25, this.game.cache.getBitmapData('upgradePanel'));
 
     this.statusPanel = this.game.add.image(5, 547, this.game.cache.getBitmapData('statusPanel'));
 
@@ -47,7 +47,7 @@ Game.prototype = {
     upgradeButtons.position.setTo(8 , 10);
 
     var upgradeButtonsData = [
-        {icon: 'dagger', name: 'Attack', level: 0, cost: 5, purchaseHandler: function(button, player) {
+        {icon: 'dagger', name: 'Attack', level: 0, cost: 1, purchaseHandler: function(button, player) {
             player.clickDmg += 1;
         }},
         {icon: 'swordIcon1', name: 'Auto-Attack', level: 0, cost: 1, purchaseHandler: function(button, player) {
@@ -65,7 +65,6 @@ Game.prototype = {
         //button.events.onInputDown.add(state.onUpgradeButtonClick, state);
 
         upgradeButtons.addChild(button);
-
       });
 
 
