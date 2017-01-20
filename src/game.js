@@ -62,7 +62,7 @@ Game.prototype = {
         button.text = button.addChild(state.game.add.text(42, 6, buttonData.name + ': ' + buttonData.level, {font: '16px Arial Black'}));
         button.details = buttonData;
         button.costText = button.addChild(state.game.add.text(42, 24, 'Cost: ' + buttonData.cost, {font: '16px Arial Black'}));
-        //button.events.onInputDown.add(state.onUpgradeButtonClick, state);
+        button.events.onInputDown.add(state.onUpgradeButtonClick, state);
 
         upgradeButtons.addChild(button);
       });
