@@ -299,11 +299,8 @@ Game.prototype = {
                   this.level--;
                   this.levelKills = 0;
                   this.currentMonster.position.set(1000, this.game.world.centerY);
+                  this.playerHealthText.text = 'DEAD';
 
-                  this.player.health=100;
-                  this.playerHealthText.text = 'HP: ' + Math.round(this.player.health);
-                  this.player.experience = this.player.experience - this.level * 1.25;
-                  this.playerXpText.text = 'XP: ' + Math.round(this.player.experience);
                   // pick a new monster
                   this.currentMonster = this.monsters.getRandom();
                   // upgrade the monster based on level
@@ -314,7 +311,10 @@ Game.prototype = {
                   this.levelText.text = 'Level: ' + this.level;
                   this.levelKillsText.text = 'Kills: ' + this.levelKills + '/' + this.levelKillsRequired;
 
-
+                  this.player.health=100;
+                  this.playerHealthText.text = 'HP: ' + Math.round(this.player.health);
+                  this.player.experience = this.player.experience - this.level * 1.25;
+                  this.playerXpText.text = 'XP: ' + Math.round(this.player.experience);
                 }
                 // update the health text
                 this.playerHealthText.text = 'HP: ' + Math.round(this.player.health);
@@ -362,10 +362,10 @@ Game.prototype = {
     if (this.levelKills >= this.levelKillsRequired) {
         this.level++;
         this.levelKills = 0;
+        this.player.health=100;
+        this.playerHealthText.text = 'HP: ' + Math.round(this.player.health);
     }
 
-    this.player.health=100;
-    this.playerHealthText.text = 'HP: ' + Math.round(this.player.health);
     this.player.experience = this.player.experience + this.level * 1.25;
     this.playerXpText.text = 'XP: ' + Math.round(this.player.experience);
     // pick a new monster
