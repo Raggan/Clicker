@@ -168,6 +168,24 @@ Game.prototype = {
       this.coins.callAll('events.onInputDown.add', 'events.onInputDown', this.onClickCoin, this);
 
 
+
+            var barConfigMonster = {x: this.world.centerX,
+              y: this.world.centerY-150,
+              width: 100,
+              height: 10,
+              bg: {
+                  color: '#651828'
+                  },
+              bar: {
+                  color: '#ff0000'
+                  },
+              animationDuration: 200,
+              flipped: false
+            };
+            this.monsterHealthBar = new HealthBar(this.game, barConfigMonster);
+
+
+
       var monsterData = [
           {name: 'Aerocephal',        image: 'aerocephal',        maxHealth: 10, maxDmg: 2},
           {name: 'Arcana Drake',      image: 'arcana_drake',      maxHealth: 20, maxDmg: 3},
@@ -265,7 +283,10 @@ Game.prototype = {
       // 100ms 10x a second
       this.dpsTimer = this.time.events.loop(1000, this.onDPS, this);
       this.monsterDpsTimer = this.time.events.loop(1000, this.onMonsterDPS, this);
-      },
+    },
+
+
+
       onDPS: function() {
       if (this.player.dps > 0) {
           if (this.currentMonster && this.currentMonster.alive) {
@@ -273,8 +294,9 @@ Game.prototype = {
               var healthBeforeDmg = Math.round(this.currentMonster.health);
               this.currentMonster.damage(dmg);
               // update the health text
-              this.monsterHealthText.text = this.currentMonster.alive ? Math.round(this.currentMonster.health) + ' HP' : 'DEAD';
 
+              this.monsterHealthText.text = this.currentMonster.alive ? Math.round(this.currentMonster.health) + ' HP' : 'DEAD';
+              this.monsterHealthBar.setPercent((this.currentMonster.health/this.currentMonster.maxHealth)*100);
               var dpsText = this.dpsTextPool.getFirstExists(false);
                 if (dpsText) {
                   dpsText.text = this.player.dps;
@@ -294,7 +316,9 @@ Game.prototype = {
 
                 var dmg = this.currentMonster.maxDmg * (1 + this.level / 10) ;
                 var healthBeforeDmg = Math.round(this.player.health);
-                if (this.player.health > 0) {this.player.health = this.player.health - dmg;}
+                if (this.player.health > 0) {
+                  this.player.health = this.player.health - dmg;
+                }
                 if (this.player.health <= 0) {
                   this.level--;
                   this.levelKills = 0;
@@ -318,7 +342,7 @@ Game.prototype = {
                 }
                 // update the health text
                 this.playerHealthText.text = 'HP: ' + Math.round(this.player.health);
-
+                this.monsterHealthBar.setPercent((this.currentMonster.health/this.currentMonster.maxHealth)*100);
                   var monsterDmgText = this.monsterDmgTextPool.getFirstExists(false);
                     if (monsterDmgText) {
                       monsterDmgText.text = Math.round(dmg);
@@ -333,9 +357,10 @@ Game.prototype = {
 
     onClickMonster: function(monster,pointer) {
     // apply click damage to monster
+
     this.currentMonster.damage(this.player.clickDmg);
     this.monsterHealthText.text = this.currentMonster.alive ? Math.round(this.currentMonster.health) + ' HP' : 'DEAD';
-
+    this.monsterHealthBar.setPercent((this.currentMonster.health/this.currentMonster.maxHealth)*100);
     var dmgText = this.dmgTextPool.getFirstExists(false);
       if (dmgText) {
         dmgText.text = this.player.clickDmg;
