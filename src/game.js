@@ -142,7 +142,7 @@ Game.prototype = {
       var coinValue;
       for (var d=0; d<50; d++) {
           coinValue = this.add.text(0, 0, '1', {
-              font: '64px Arial Black',
+              font: '24px Arial Black',
               fill: '#FFFF00',
               strokeThickness: 4
           });
@@ -166,8 +166,7 @@ Game.prototype = {
       this.coins.createMultiple(50, 'gold_coin', '', false);
       this.coins.setAll('inputEnabled', true);
       this.coins.setAll('goldValue', 1);
-      this.coins.callAll('events.onInputDown.add', 'events.onInputDown', this.onClickCoin, this);
-
+      this.coins.callAll('events.onInputOver.add', 'events.onInputOver', this.onHoverCoin, this);
 
 
             var barConfigMonster = {x: this.world.centerX,
@@ -333,8 +332,8 @@ Game.prototype = {
                   // pick a new monster
                   do { this.currentMonster = this.monsters.getRandom();} while (this.currentMonster.minLevel != this.level);
                   // upgrade the monster based on level
-                  var x = Math.pow(1.55,(state.level - 1));
-                  this.currentMonster.maxHealth = 10 * (state.level - 1 + x);
+                  var x = Math.pow(1.55,(this.level - 1));
+                  this.currentMonster.maxHealth = 10 * (this.level - 1 + x);
                   // make sure they are fully healed
                   this.currentMonster.revive(this.currentMonster.maxHealth);
                   this.currentMonster.position.set(this.game.world.centerX, this.game.world.centerY + 50);
@@ -385,8 +384,8 @@ Game.prototype = {
     coin = this.coins.getFirstExists(false);
     coin.reset(this.game.world.centerX + this.game.rnd.integerInRange(-100, 100), this.game.world.centerY);
     game.world.bringToTop(this.coins);
-    coin.goldValue = Math.round(this.level * 1.33);
-    this.game.time.events.add(Phaser.Timer.SECOND * 3, this.onClickCoin, this, coin);
+    coin.goldValue = Math.ceil(this.currentMonster.maxHealth / 15);
+    this.game.time.events.add(Phaser.Timer.SECOND * 5, this.onHoverCoin, this, coin);
 
     this.levelKills++;
 
@@ -423,7 +422,7 @@ Game.prototype = {
     },
 
 
-    onClickCoin: function(coin) {
+    onHoverCoin: function(coin) {
       if (!coin.alive) {
       return;
     }
@@ -434,7 +433,7 @@ Game.prototype = {
 
       var coinValue = this.coinValuePool.getFirstExists(false);
         if (coinValue) {
-          coinValue.text = coin.goldValue;
+          coinValue.text = coin.goldValue + 'Gold';
           coinValue.reset(coin.position.x, coin.position.y);
           coinValue.alpha = 1;
           coinValue.tween.start();
