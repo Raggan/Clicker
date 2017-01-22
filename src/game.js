@@ -73,7 +73,7 @@ Game.prototype = {
       var dmgText;
       for (var d=0; d<50; d++) {
           dmgText = this.add.text(0, 0, '1', {
-              font: '64px Arial Black',
+              font: '24px Arial Black',
               fill: '#fff',
               strokeThickness: 4
           });
@@ -96,7 +96,7 @@ Game.prototype = {
       var monsterDmgText;
       for (var d=0; d<50; d++) {
           monsterDmgText = this.add.text(0, 0, '1', {
-              font: '64px Arial Black',
+              font: '24px Arial Black',
               fill: '#0101DF',
               strokeThickness: 4
           });
@@ -119,7 +119,7 @@ Game.prototype = {
       var dpsText;
       for (var d=0; d<50; d++) {
           dpsText = this.add.text(0, 0, '1', {
-              font: '64px Arial Black',
+              font: '24px Arial Black',
               fill: '#FF0000',
               strokeThickness: 4
           });
@@ -285,7 +285,7 @@ Game.prototype = {
       }));
       this.monsterHealthText.anchor.set(0.5);
       // 100ms 10x a second
-      this.dpsTimer = this.time.events.loop(1000, this.onDPS, this);
+      this.dpsTimer = this.time.events.loop(100, this.onDPS, this);
       this.monsterDpsTimer = this.time.events.loop(1000, this.onMonsterDPS, this);
     },
 
@@ -294,22 +294,22 @@ Game.prototype = {
       onDPS: function() {
       if (this.player.dps > 0) {
           if (this.currentMonster && this.currentMonster.alive) {
-              var dmg = this.player.dps;
+              var dmg = this.player.dps / 10;
               var healthBeforeDmg = Math.round(this.currentMonster.health);
               this.currentMonster.damage(dmg);
               // update the health text
 
               this.monsterHealthText.text = this.currentMonster.alive ? Math.round(this.currentMonster.health) + ' HP' : 'DEAD';
               this.monsterHealthBar.setPercent((this.currentMonster.health/this.currentMonster.maxHealth)*100);
-              var dpsText = this.dpsTextPool.getFirstExists(false);
-                if (dpsText) {
-                  dpsText.text = this.player.dps;
-                  dpsText.reset(this.currentMonster.position.x, this.currentMonster.position.y);
-                  dpsText.alpha = 1;
-                  dpsText.tween.start();
-
-
-                  }
+              // var dpsText = this.dpsTextPool.getFirstExists(false);
+              //   if (dpsText) {
+              //     dpsText.text ='+ ' + this.player.dps;
+              //     dpsText.reset(this.currentMonster.position.x, this.currentMonster.position.y);
+              //     dpsText.alpha = 1;
+              //     dpsText.tween.start();
+              //
+              //
+              //     }
               }
           }
       },
@@ -350,7 +350,7 @@ Game.prototype = {
                 this.monsterHealthBar.setPercent((this.currentMonster.health/this.currentMonster.maxHealth)*100);
                   var monsterDmgText = this.monsterDmgTextPool.getFirstExists(false);
                     if (monsterDmgText) {
-                      monsterDmgText.text = Math.round(dmg);
+                      monsterDmgText.text ='+ ' + Math.round(dmg);
                       monsterDmgText.reset(this.currentMonster.position.x, this.currentMonster.position.y);
                       monsterDmgText.alpha = 1;
                       monsterDmgText.tween.start();
@@ -368,11 +368,11 @@ Game.prototype = {
     this.monsterHealthBar.setPercent((this.currentMonster.health/this.currentMonster.maxHealth)*100);
     var dmgText = this.dmgTextPool.getFirstExists(false);
       if (dmgText) {
-        dmgText.text = this.player.clickDmg;
+        dmgText.text ='+ ' + this.player.clickDmg;
         dmgText.reset(pointer.positionDown.x, pointer.positionDown.y);
         dmgText.alpha = 1;
         dmgText.tween.start();
-      } 
+      }
     },
 
     onKilledMonster: function(monster) {
@@ -395,7 +395,7 @@ Game.prototype = {
         this.player.health=100;
         this.playerHealthText.text = 'HP: ' + Math.round(this.player.health);
     }
-
+    this.monsterHealthText.text = 'DEAD';
     this.player.experience = this.currentMonster.maxXp + this.player.experience;
     this.playerXpText.text = 'XP: ' + Math.round(this.player.experience);
     // pick a new monster
@@ -433,7 +433,7 @@ Game.prototype = {
 
       var coinValue = this.coinValuePool.getFirstExists(false);
         if (coinValue) {
-          coinValue.text = coin.goldValue + 'Gold';
+          coinValue.text = coin.goldValue + ' Gold';
           coinValue.reset(coin.position.x, coin.position.y);
           coinValue.alpha = 1;
           coinValue.tween.start();
