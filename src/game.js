@@ -14,6 +14,7 @@ var Game = function(game){
   this.levelKills = 0;
   // how many monsters are required to advance a level
   this.levelKillsRequired = 10;
+
 };
 
 Game.prototype = {
@@ -187,22 +188,22 @@ Game.prototype = {
 
 
       var monsterData = [
-          {name: 'Aerocephal',        image: 'aerocephal',        maxHealth: 10, maxDmg: 2},
-          {name: 'Arcana Drake',      image: 'arcana_drake',      maxHealth: 20, maxDmg: 3},
-          {name: 'Aurum Drakueli',    image: 'aurum-drakueli',    maxHealth: 30, maxDmg: 4},
-          {name: 'Bat',               image: 'bat',               maxHealth: 5,  maxDmg: 1},
-          {name: 'Daemarbora',        image: 'daemarbora',        maxHealth: 10, maxDmg: 2},
-          {name: 'Deceleon',          image: 'deceleon',          maxHealth: 10, maxDmg: 2},
-          {name: 'Demonic Essence',   image: 'demonic_essence',   maxHealth: 15, maxDmg: 2},
-          {name: 'Dune Crawler',      image: 'dune_crawler',      maxHealth: 8,  maxDmg: 1},
-          {name: 'Green Slime',       image: 'green_slime',       maxHealth: 3,  maxDmg: 1},
-          {name: 'Nagaruda',          image: 'nagaruda',          maxHealth: 13, maxDmg: 2},
-          {name: 'Rat',               image: 'rat',               maxHealth: 2,  maxDmg: 1},
-          {name: 'Scorpion',          image: 'scorpion',          maxHealth: 2,  maxDmg: 1},
-          {name: 'Skeleton',          image: 'skeleton',          maxHealth: 6,  maxDmg: 1},
-          {name: 'Snake',             image: 'snake',             maxHealth: 4,  maxDmg: 1},
-          {name: 'Spider',            image: 'spider',            maxHealth: 4,  maxDmg: 1},
-          {name: 'Stygian Lizard',    image: 'stygian_lizard',    maxHealth: 20, maxDmg: 3}
+          {name: 'Aerocephal',        image: 'aerocephal',        maxHealth: 10, maxDmg: 4, maxXp: 4, minLevel: 30, maxLevel: 15},
+          {name: 'Arcana Drake',      image: 'arcana_drake',      maxHealth: 10, maxDmg: 2, maxXp: 2, minLevel: 10, maxLevel: 20},
+          {name: 'Aurum Drakueli',    image: 'aurum-drakueli',    maxHealth: 10, maxDmg: 8, maxXp: 8, minLevel: 70, maxLevel: 30},
+          {name: 'Bat',               image: 'bat',               maxHealth: 5,  maxDmg: 1, maxXp: 1, minLevel: 5, maxLevel: 5},
+          {name: 'Daemarbora',        image: 'daemarbora',        maxHealth: 10, maxDmg: 3, maxXp: 3, minLevel: 20, maxLevel: 15},
+          {name: 'Deceleon',          image: 'deceleon',          maxHealth: 9, maxDmg: 1, maxXp: 1, minLevel: 9, maxLevel: 15},
+          {name: 'Demonic Essence',   image: 'demonic_essence',   maxHealth: 10, maxDmg: 6, maxXp: 6, minLevel: 50, maxLevel: 15},
+          {name: 'Dune Crawler',      image: 'dune_crawler',      maxHealth: 8,  maxDmg: 1, maxXp: 1, minLevel: 8, maxLevel: 5},
+          {name: 'Green Slime',       image: 'green_slime',       maxHealth: 7,  maxDmg: 1, maxXp: 1, minLevel: 7, maxLevel: 5},
+          {name: 'Nagaruda',          image: 'nagaruda',          maxHealth: 10, maxDmg: 5, maxXp: 5, minLevel: 40, maxLevel: 15},
+          {name: 'Rat',               image: 'rat',               maxHealth: 1,  maxDmg: 1, maxXp: 1, minLevel: 1, maxLevel: 5},
+          {name: 'Scorpion',          image: 'scorpion',          maxHealth: 2,  maxDmg: 1, maxXp: 1, minLevel: 2, maxLevel: 5},
+          {name: 'Skeleton',          image: 'skeleton',          maxHealth: 4,  maxDmg: 1, maxXp: 1, minLevel: 4, maxLevel: 5},
+          {name: 'Snake',             image: 'snake',             maxHealth: 3,  maxDmg: 1, maxXp: 1, minLevel: 3, maxLevel: 5},
+          {name: 'Spider',            image: 'spider',            maxHealth: 6,  maxDmg: 1, maxXp: 1, minLevel: 6, maxLevel: 5},
+          {name: 'Stygian Lizard',    image: 'stygian_lizard',    maxHealth: 10, maxDmg: 7, maxXp: 7, minLevel: 60, maxLevel: 20}
       ];
 
 
@@ -248,8 +249,12 @@ Game.prototype = {
         monster.details = data;
 
         // use the built in health component
-        monster.health = monster.maxHealth = data.maxHealth;
+        var x = Math.pow(1.55,(state.level - 1));
+        monster.health = monster.maxHealth = 10 * (state.level - 1 + x);
         monster.maxDmg = data.maxDmg;
+        monster.maxXp = data.maxXp;
+        monster.minLevel = data.minLevel;
+        monster.maxLevel = data.maxLevel;
         // hook into health and lifecycle events
         monster.events.onKilled.add(state.onKilledMonster, state);
         monster.events.onRevived.add(state.onRevivedMonster, state);
@@ -260,7 +265,7 @@ Game.prototype = {
       });
 
 
-      this.currentMonster = this.monsters.getRandom();
+      do { this.currentMonster = this.monsters.getRandom();} while (this.currentMonster.minLevel != this.level);
       this.currentMonster.position.set(this.game.world.centerX, this.game.world.centerY + 50);
       //this.currentMonster.anchor.setTo(0.5);
       this.monsterInfoUI = this.game.add.group();
@@ -326,12 +331,13 @@ Game.prototype = {
                   this.playerHealthText.text = 'DEAD';
 
                   // pick a new monster
-                  this.currentMonster = this.monsters.getRandom();
+                  do { this.currentMonster = this.monsters.getRandom();} while (this.currentMonster.minLevel != this.level);
                   // upgrade the monster based on level
-                  this.currentMonster.maxHealth = Math.ceil(this.currentMonster.details.maxHealth + ((this.level - 1) * 10.6));
+                  var x = Math.pow(1.55,(state.level - 1));
+                  this.currentMonster.maxHealth = 10 * (state.level - 1 + x);
                   // make sure they are fully healed
                   this.currentMonster.revive(this.currentMonster.maxHealth);
-
+                  this.currentMonster.position.set(this.game.world.centerX, this.game.world.centerY + 50);
                   this.levelText.text = 'Level: ' + this.level;
                   this.levelKillsText.text = 'Kills: ' + this.levelKills + '/' + this.levelKillsRequired;
 
@@ -391,15 +397,17 @@ Game.prototype = {
         this.playerHealthText.text = 'HP: ' + Math.round(this.player.health);
     }
 
-    this.player.experience = this.player.experience + this.level * 1.25;
+    this.player.experience = this.currentMonster.maxXp + this.player.experience;
     this.playerXpText.text = 'XP: ' + Math.round(this.player.experience);
     // pick a new monster
-    this.currentMonster = this.monsters.getRandom();
+    do { this.currentMonster = this.monsters.getRandom();} while (this.currentMonster.minLevel != this.level);
     // upgrade the monster based on level
-    this.currentMonster.maxHealth = Math.ceil(this.currentMonster.details.maxHealth + ((this.level - 1) * 10.6));
+    var x = Math.pow(1.55,(this.level - 1));
+    this.currentMonster.maxHealth = 10 * (this.level - 1 + x);
+
     // make sure they are fully healed
     this.currentMonster.revive(this.currentMonster.maxHealth);
-
+    this.currentMonster.position.set(this.game.world.centerX, this.game.world.centerY + 50);
     this.levelText.text = 'Level: ' + this.level;
     this.levelKillsText.text = 'Kills: ' + this.levelKills + '/' + this.levelKillsRequired;
 
