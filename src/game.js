@@ -372,7 +372,7 @@ Game.prototype = {
         dmgText.reset(pointer.positionDown.x, pointer.positionDown.y);
         dmgText.alpha = 1;
         dmgText.tween.start();
-      }
+      } 
     },
 
     onKilledMonster: function(monster) {
