@@ -377,7 +377,7 @@ Game.prototype = {
 
     onKilledMonster: function(monster) {
     // move the monster off screen again
-    monster.position.set(1000, this.game.world.centerY);
+    monster.position.set(this.game.world.centerX, -100);
 
     var coin;
     // spawn a coin on the ground
@@ -406,7 +406,7 @@ Game.prototype = {
 
     // make sure they are fully healed
     this.currentMonster.revive(this.currentMonster.maxHealth);
-    this.currentMonster.position.set(this.game.world.centerX, this.game.world.centerY + 50);
+    //this.currentMonster.position.set(this.game.world.centerX, this.game.world.centerY + 50);
     this.levelText.text = 'Level: ' + this.level;
     this.levelKillsText.text = 'Kills: ' + this.levelKills + '/' + this.levelKillsRequired;
 
@@ -415,7 +415,8 @@ Game.prototype = {
 
 
     onRevivedMonster: function(monster) {
-    monster.position.set(this.game.world.centerX, this.game.world.centerY);
+    this.add.tween(monster).to( { x: this.game.world.centerX, y: this.game.world.centerY + 50 }, 200, Phaser.Easing.Bounce.Out, true);
+    //monster.position.set(this.game.world.centerX, this.game.world.centerY + 50);
     // update the text display
     this.monsterNameText.text = monster.details.name;
     this.monsterHealthText.text = monster.health + 'HP';
