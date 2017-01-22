@@ -19,7 +19,7 @@ Preload.prototype = {
     this.game.load.image('snake', 'assets/allacrost_enemy_sprites/snake.png');
     this.game.load.image('spider', 'assets/allacrost_enemy_sprites/spider.png');
     this.game.load.image('stygian_lizard', 'assets/allacrost_enemy_sprites/stygian_lizard.png');
-
+		this.game.load.image('slash', 'assets/slash_001.gif');
     this.game.load.image('gold_coin', 'assets/496_RPG_icons/I_GoldCoin.png');
     this.game.load.image('dagger', 'assets/496_RPG_icons/W_Dagger002.png');
     this.game.load.image('swordIcon1', 'assets/496_RPG_icons/S_Sword01.png');

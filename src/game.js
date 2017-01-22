@@ -14,7 +14,8 @@ var Game = function(game){
   this.levelKills = 0;
   // how many monsters are required to advance a level
   this.levelKillsRequired = 10;
-
+  this.bossStages = [10,20,30,40,50,60,70,80,90];
+  this.isBossStage = false;
 };
 
 Game.prototype = {
@@ -187,27 +188,23 @@ Game.prototype = {
 
 
       var monsterData = [
-          {name: 'Bat',               image: 'bat',               maxDmg: 1, maxXp: 1, minLevel: 1, maxLevel: 9},
-          {name: 'Deceleon',          image: 'deceleon',          maxDmg: 1, maxXp: 1, minLevel: 1, maxLevel: 9},
-          {name: 'Dune Crawler',      image: 'dune_crawler',      maxDmg: 1, maxXp: 1, minLevel: 1, maxLevel: 9},
-          {name: 'Green Slime',       image: 'green_slime',       maxDmg: 1, maxXp: 1, minLevel: 1, maxLevel: 9},
-          {name: 'Rat',               image: 'rat',               maxDmg: 1, maxXp: 1, minLevel: 1, maxLevel: 9},
-          {name: 'Scorpion',          image: 'scorpion',          maxDmg: 1, maxXp: 1, minLevel: 1, maxLevel: 9},
-          {name: 'Skeleton',          image: 'skeleton',          maxDmg: 1, maxXp: 1, minLevel: 1, maxLevel: 9},
-          {name: 'Snake',             image: 'snake',             maxDmg: 1, maxXp: 1, minLevel: 1, maxLevel: 9},
-          {name: 'Spider',            image: 'spider',            maxDmg: 1, maxXp: 1, minLevel: 1, maxLevel: 9}
+          {name: 'Deceleon',          image: 'deceleon',          maxDmg: 1, minLevel: 1, maxLevel: 9, isBossMonster: false},
+          {name: 'Bat',               image: 'bat',               maxDmg: 1, minLevel: 1, maxLevel: 9, isBossMonster: false},
+          {name: 'Dune Crawler',      image: 'dune_crawler',      maxDmg: 1, minLevel: 1, maxLevel: 9, isBossMonster: false},
+          {name: 'Green Slime',       image: 'green_slime',       maxDmg: 1, minLevel: 1, maxLevel: 9, isBossMonster: false},
+          {name: 'Rat',               image: 'rat',               maxDmg: 1, minLevel: 1, maxLevel: 9, isBossMonster: false},
+          {name: 'Scorpion',          image: 'scorpion',          maxDmg: 1, minLevel: 1, maxLevel: 9, isBossMonster: false},
+          {name: 'Skeleton',          image: 'skeleton',          maxDmg: 1, minLevel: 1, maxLevel: 9, isBossMonster: false},
+          {name: 'Snake',             image: 'snake',             maxDmg: 1, minLevel: 1, maxLevel: 9, isBossMonster: false},
+          {name: 'Spider',            image: 'spider',            maxDmg: 1, minLevel: 1, maxLevel: 9, isBossMonster: false},
+          {name: 'Aerocephal',        image: 'aerocephal',        maxDmg: 4, minLevel: 30, maxLevel: 30, isBossMonster: true},
+          {name: 'Arcana Drake',      image: 'arcana_drake',      maxDmg: 2, minLevel: 10, maxLevel: 10, isBossMonster: true},
+          {name: 'Aurum Drakueli',    image: 'aurum-drakueli',    maxDmg: 8, minLevel: 70, maxLevel: 70, isBossMonster: true},
+          {name: 'Daemarbora',        image: 'daemarbora',        maxDmg: 3, minLevel: 20, maxLevel: 20, isBossMonster: true},
+          {name: 'Demonic Essence',   image: 'demonic_essence',   maxDmg: 6, minLevel: 50, maxLevel: 50, isBossMonster: true},
+          {name: 'Nagaruda',          image: 'nagaruda',          maxDmg: 5, minLevel: 40, maxLevel: 40, isBossMonster: true},
+          {name: 'Stygian Lizard',    image: 'stygian_lizard',    maxDmg: 7, minLevel: 60, maxLevel: 60, isBossMonster: true}
       ];
-
-      var bossMonsterData = [
-        {name: 'Aerocephal',        image: 'aerocephal',        maxDmg: 4, maxXp: 4, minLevel: 30, maxLevel: 30},
-        {name: 'Arcana Drake',      image: 'arcana_drake',      maxDmg: 2, maxXp: 2, minLevel: 10, maxLevel: 10},
-        {name: 'Aurum Drakueli',    image: 'aurum-drakueli',    maxDmg: 8, maxXp: 8, minLevel: 70, maxLevel: 70},
-        {name: 'Daemarbora',        image: 'daemarbora',        maxDmg: 3, maxXp: 3, minLevel: 20, maxLevel: 20},
-        {name: 'Demonic Essence',   image: 'demonic_essence',   maxDmg: 6, maxXp: 6, minLevel: 50, maxLevel: 50},
-        {name: 'Nagaruda',          image: 'nagaruda',          maxDmg: 5, maxXp: 5, minLevel: 40, maxLevel: 40},
-        {name: 'Stygian Lizard',    image: 'stygian_lizard',    maxDmg: 7, maxXp: 7, minLevel: 60, maxLevel: 60}
-      ];
-
 
 
 
@@ -253,21 +250,23 @@ Game.prototype = {
         // use the built in health component
         var x = Math.pow(1.55,(state.level - 1));
         monster.health = monster.maxHealth = 10 * (state.level - 1 + x);
-        monster.maxXp = data.maxXp;
+        monster.maxXp = 5;
         monster.minLevel = data.minLevel;
         monster.maxLevel = data.maxLevel;
+        monster.isBossMonster = data.isBossMonster;
         // hook into health and lifecycle events
         monster.events.onKilled.add(state.onKilledMonster, state);
         monster.events.onRevived.add(state.onRevivedMonster, state);
 
         //enable input so we can click it!
         monster.inputEnabled = true;
+        monster.input.useHandCursor = true;
         monster.events.onInputDown.add(state.onClickMonster, state);
       });
 
 
       do { this.currentMonster = this.monsters.getRandom();}
-      while (this.currentMonster.minLevel > this.level  && this.level < this.currentMonster.maxLevel);
+      while (this.currentMonster.minLevel > this.level  && this.level < this.currentMonster.maxLevel && this.currentMonster.isBossMonster == true);
       this.currentMonster.position.set(this.game.world.centerX, this.game.world.centerY + 50);
       //this.currentMonster.anchor.setTo(0.5);
       this.monsterInfoUI = this.game.add.group();
@@ -292,27 +291,14 @@ Game.prototype = {
       //this.monsterDpsTimer = this.time.events.loop(1000, this.onMonsterDPS, this);
     },
 
-
-
       onDPS: function() {
       if (this.player.dps > 0) {
           if (this.currentMonster && this.currentMonster.alive) {
               var dmg = this.player.dps / 10;
               var healthBeforeDmg = Math.round(this.currentMonster.health);
               this.currentMonster.damage(dmg);
-              // update the health text
-
               this.monsterHealthText.text = this.currentMonster.alive ? Math.round(this.currentMonster.health) + ' HP' : 'DEAD';
               this.monsterHealthBar.setPercent((this.currentMonster.health/this.currentMonster.maxHealth)*100);
-              // var dpsText = this.dpsTextPool.getFirstExists(false);
-              //   if (dpsText) {
-              //     dpsText.text ='+ ' + this.player.dps;
-              //     dpsText.reset(this.currentMonster.position.x, this.currentMonster.position.y);
-              //     dpsText.alpha = 1;
-              //     dpsText.tween.start();
-              //
-              //
-              //     }
               }
           }
       },
@@ -364,7 +350,6 @@ Game.prototype = {
 
     onClickMonster: function(monster,pointer) {
     // apply click damage to monster
-
     this.currentMonster.damage(this.player.clickDmg);
     this.monsterHealthText.text = this.currentMonster.alive ? Math.round(this.currentMonster.health) + ' HP' : 'DEAD';
     this.monsterHealthBar.setPercent((this.currentMonster.health/this.currentMonster.maxHealth)*100);
@@ -397,9 +382,12 @@ Game.prototype = {
         this.player.health=100;
         this.playerHealthText.text = 'HP: ' + Math.round(this.player.health);
     }
+
     this.monsterHealthText.text = 'DEAD';
     this.player.experience = this.currentMonster.maxXp + this.player.experience;
     this.playerXpText.text = 'XP: ' + Math.round(this.player.experience);
+
+
     // pick a new monster
     do { this.currentMonster = this.monsters.getRandom();}
     while (this.currentMonster.minLevel > this.level  && this.level < this.currentMonster.maxLevel);
