@@ -22,6 +22,7 @@ Game.prototype = {
 
 	create: function() {
     var state = this;
+    
 
     var bg = state.game.add.tileSprite(0, 0, state.game.world.width,
     state.game.world.height, 'forest');
